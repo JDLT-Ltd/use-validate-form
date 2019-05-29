@@ -1,6 +1,6 @@
 {
   "name": "use-validate-form",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "react hook for form validation",
   "main": "build/index.js",
   "author": "Gary Holland, Richard Tzanov",
