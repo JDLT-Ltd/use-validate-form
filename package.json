@@ -1,0 +1,31 @@
+{
+  "name": "use-validate-form",
+  "version": "1.0.6",
+  "description": "react hook for form validation",
+  "main": "build/index.js",
+  "author": "Gary Holland, Richard Tzanov",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/preset-react": "^7.0.0-beta.51",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.5",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "eslint": "^5.0.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-prettier": "^2.6.1",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
+  }
+}
