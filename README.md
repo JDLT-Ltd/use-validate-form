@@ -28,6 +28,8 @@ const [
 
 ```
 
+Each item in the `validators` arrays must be an objects with a `func` property which returns `true` or `false` and an `error` property which is a string that will explain to a user why their input is invalid.
+
 Each of the field objects returned by `useValidateForm` (i.e. `name`, `age`) have the following properties:
 
 ```JSX
