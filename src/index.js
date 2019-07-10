@@ -1,7 +1,7 @@
-import { useReducer } from "react"
+import { useReducer } from 'react'
 
-export const useValidateForm = formFields => {
-  const form = Object.entries(formFields).reduce(
+const createForm = formFields =>
+  Object.entries(formFields).reduce(
     (form, [key, { initialValue, validators }]) => {
       const { isValid: isFieldValid, errors, isDirty } = runValidators(
         initialValue,
@@ -25,6 +25,9 @@ export const useValidateForm = formFields => {
     },
     { isDirty: false }
   )
+
+export const useValidateForm = formFields => {
+  const form = createForm(formFields)
   return useReducer(reducer, {
     ...form,
     isValid: Object.values(form.fields).every(field => field.isValid),
@@ -48,14 +51,26 @@ const runValidators = (value, validators, isBlur) =>
     { errors: [], isValid: true, isDirty: !isBlur }
   )
 
-const reducer = (form, { type, payload: { name: fieldName, value } }) => {
+const reducer = (
+  form,
+  { type, payload: { name: fieldName, value, newForm } }
+) => {
   switch (type) {
-    case "SET_VALUE":
+    case 'SET_VALUE':
       return updateForm(form, fieldName, value, false)
-    case "VALIDATE":
+    case 'VALIDATE':
       return updateForm(form, fieldName, value, true)
+    case 'CREATE_NEW_FORM':
+      const updatedForm = createForm(newForm)
+      return {
+        ...updatedForm,
+        isValid: Object.values(updatedForm.fields).every(field => field.isValid),
+        hasErrors: Object.values(updatedForm.fields).some(
+          field => field.errors.length > 0
+        )
+      }
     default:
-      throw new Error("Action must be of type SET_VALUE or VALIDATE")
+      throw new Error('Action must be of type SET_VALUE, VALIDATE or CREATE_NEW_FORM')
   }
 }
 
@@ -103,19 +118,19 @@ const emailAddressRegex = /[^@]+@[^.]+\..+/
 
 export const isRequired = {
   func: value => !!value && value.length > 0,
-  error: "This field is required"
+  error: 'This field is required'
 }
 
 export const isEmailAddress = {
   func: value => (value ? emailAddressRegex.test(value) : true),
-  error: "Please enter a valid email address"
+  error: 'Please enter a valid email address'
 }
 
 export const isEmailAddressList = {
   func: value => {
     return value.every(v => emailAddressRegex.test(v))
   },
-  error: "Please enter valid email addresses"
+  error: 'Please enter valid email addresses'
 }
 
 export const minLength = min => ({
