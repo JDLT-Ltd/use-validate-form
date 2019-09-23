@@ -1,18 +1,19 @@
-import { useReducer } from 'react'
+import { useReducer, FormEvent } from 'react'
 
-enum fieldType {
-  'STRING',
-  'NUMBER',
-  'DATE'
+enum FieldType {
+  'STRING' = 'string',
+  'NUMBER' = 'number',
+  'DATE' = 'date',
+  'BOOLEAN' = 'boolean'
 }
 
 interface Validator {
   error: String
-  func: (value: any) => Boolean
+  func: (value: any, type: FieldType) => Boolean
 }
 
 interface FormField<T> {
-  type: fieldType
+  type: FieldType
   value: T
   initialValue: T
   isValid: Boolean
@@ -34,7 +35,10 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
     fields: defaultFields
   }
   return Object.entries(formFields).reduce((form, [key, { initialValue, validators, type }]) => {
-    const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, validators, false)
+    if (!type || !(type in FieldType)) {
+      throw new Error("Fields must have a type of 'string', 'number', 'date' or 'boolean' ")
+    }
+    const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false)
     return {
       ...form,
       fields: {
@@ -62,10 +66,10 @@ export const useValidateForm = (formFields: [FormField<any>]) => {
   })
 }
 
-const runValidators = (value: any, validators: Array<Validator>, isBlur: Boolean) =>
+const runValidators = (value: any, type: FieldType, validators: Array<Validator>, isBlur: Boolean) =>
   validators.reduce(
     (acc: any, { error, func }: Validator) => {
-      const passed = func(value)
+      const passed = func(value, type)
 
       return passed
         ? acc
@@ -104,7 +108,7 @@ const reducer = (
 
 const updateForm = (form: Form, fieldName: string, value: any, isBlur: Boolean) => {
   const { validators, type }: FormField<any> = form.fields[fieldName as any]
-  const { isValid: isFieldValid, errors, isDirty: isFieldDirty } = runValidators(value, validators, isBlur)
+  const { isValid: isFieldValid, errors, isDirty: isFieldDirty } = runValidators(value, type, validators, isBlur)
 
   const updatedFormFields: Form = {
     ...form,
@@ -137,7 +141,13 @@ const updateForm = (form: Form, fieldName: string, value: any, isBlur: Boolean) 
 const emailAddressRegex = /[^@]+@[^.]+\..+/
 
 export const isRequired = {
-  func: (value: any) => !!value && value.length > 0,
+  func: (value: any, fieldType: FieldType) => {
+    if (fieldType === FieldType.DATE) {
+      return value && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value)
+    }
+
+    return !!value && value.length > 0
+  },
   error: 'This field is required'
 }
 
