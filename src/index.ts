@@ -8,7 +8,7 @@ enum fieldType {
 
 interface Validator {
   error: String
-  func: Function
+  func: (value: any) => Boolean
 }
 
 interface FormField<T> {
@@ -64,7 +64,7 @@ export const useValidateForm = (formFields: [FormField<any>]) => {
 
 const runValidators = (value: any, validators: Array<Validator>, isBlur: Boolean) =>
   validators.reduce(
-    (acc: any, { error, func }: any) => {
+    (acc: any, { error, func }: Validator) => {
       const passed = func(value)
 
       return passed
