@@ -36,7 +36,7 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
   }
   return Object.entries(formFields).reduce((form, [key, { initialValue, validators, type }]) => {
     if (!type || !(type in FieldType)) {
-      throw new Error("Fields must have a type of 'string', 'number', 'date' or 'boolean' ")
+      throw new Error(`Fields must have a type of 'string', 'number', 'date' or 'boolean' (got ${type})`)
     }
     const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false)
     return {
@@ -57,7 +57,7 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
   }, defaultForm)
 }
 
-export const useValidateForm = (formFields: [FormField<any>]) => {
+export const useValidateForm = (formFields: Array<FormField<any>>) => {
   const form = createForm(formFields)
   return useReducer(reducer, {
     ...form,
