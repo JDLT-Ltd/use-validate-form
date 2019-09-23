@@ -1,4 +1,4 @@
 {
-  "presets": [["env", {"useBuiltIns": true},], "react"],
+  "presets": [["env", {"useBuiltIns": true},], "react", "@babel/preset-typescript"],
   "plugins": ["transform-class-properties", "transform-object-rest-spread"]
 }

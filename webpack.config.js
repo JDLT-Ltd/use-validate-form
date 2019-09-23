@@ -1,7 +1,7 @@
-const path = require("path");
+const path = require("path")
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/index.js"),
+  entry: path.resolve(__dirname, "src/index.ts"),
   output: {
     path: path.resolve(__dirname, "build/"),
     filename: "index.js",
@@ -17,11 +17,16 @@ module.exports = {
         use: {
           loader: "babel-loader"
         }
+      },
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/
       }
     ]
   },
   devServer: {
-    contentBase: ['src/docs'],
+    contentBase: ["src/docs"],
     watchContentBase: true,
     historyApiFallback: true,
     hot: true,
@@ -29,8 +34,8 @@ module.exports = {
     port: 3000,
     open: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:4000',
+      "/api": {
+        target: "http://localhost:4000",
         secure: false
       }
     }
@@ -50,4 +55,4 @@ module.exports = {
       root: "ReactDOM"
     }
   }
-};
+}
