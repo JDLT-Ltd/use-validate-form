@@ -1,4 +1,4 @@
-import { useReducer, FormEvent } from 'react'
+import { useReducer } from 'react'
 
 enum FieldType {
   'STRING' = 'string',
