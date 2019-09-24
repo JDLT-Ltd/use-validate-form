@@ -13,8 +13,8 @@ import {
 } from 'use-validate-form'
 
 const fields = {
-  name: {initialValue: '', validators: [isRequired]}
-  age: {initialValue: '', validators: [isRequired]}
+  name: {initialValue: '', validators: [isRequired], type: 'string'}
+  age: {initialValue: '', validators: [isRequired], type: 'number'}
 }
 
 const [
@@ -35,6 +35,7 @@ Each of the field objects returned by `useValidateForm` (i.e. `name`, `age`) hav
 ```JSX
 const {
   value, // value of field
+  type, // string
   isValid, // boolean
   isDirty, // boolean
   errors, // array of strings
