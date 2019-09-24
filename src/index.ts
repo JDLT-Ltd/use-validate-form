@@ -38,7 +38,7 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
     if (!type || !Object.values(FieldType).includes(type)) {
       console.log('type: ', type)
       console.log('FieldType enum:', FieldType)
-      throw new Error(`Fields must have a type of 'string', 'number', 'date' or 'boolean' (got ${type})`)
+      throw new Error(`Fields must have a type of 'string', 'number', 'date' or 'boolean' (got ${type} for ${key})`)
     }
     const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false)
     return {
