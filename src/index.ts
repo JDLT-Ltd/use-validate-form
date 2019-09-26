@@ -9,7 +9,7 @@ enum FieldType {
 
 interface Validator {
   error: String
-  func: (value: any, type: FieldType) => Boolean
+  func: (value: any, type: FieldType, allFields: Array<FormField<any>>) => Boolean
 }
 
 interface FormField<T> {
@@ -36,11 +36,9 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
   }
   return Object.entries(formFields).reduce((form, [key, { initialValue, validators, type }]) => {
     if (!type || !Object.values(FieldType).includes(type)) {
-      console.log('type: ', type)
-      console.log('FieldType enum:', FieldType)
       throw new Error(`Fields must have a type of 'string', 'number', 'date' or 'boolean' (got ${type} for ${key})`)
     }
-    const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false)
+    const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false, formFields)
     return {
       ...form,
       fields: {
@@ -68,10 +66,16 @@ export const useValidateForm = (formFields: Array<FormField<any>>) => {
   })
 }
 
-const runValidators = (value: any, type: FieldType, validators: Array<Validator>, isBlur: Boolean) =>
+const runValidators = (
+  value: any,
+  type: FieldType,
+  validators: Array<Validator>,
+  isBlur: Boolean,
+  formFields: Array<FormField<any>>
+) =>
   validators.reduce(
     (acc: any, { error, func }: Validator) => {
-      const passed = func(value, type)
+      const passed = func(value, type, formFields)
 
       return passed
         ? acc
@@ -110,7 +114,13 @@ const reducer = (
 
 const updateForm = (form: Form, fieldName: string, value: any, isBlur: Boolean) => {
   const { validators, type }: FormField<any> = form.fields[fieldName as any]
-  const { isValid: isFieldValid, errors, isDirty: isFieldDirty } = runValidators(value, type, validators, isBlur)
+  const { isValid: isFieldValid, errors, isDirty: isFieldDirty } = runValidators(
+    value,
+    type,
+    validators,
+    isBlur,
+    form.fields
+  )
 
   const updatedFormFields: Form = {
     ...form,
