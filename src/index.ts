@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer, useMemo } from 'react'
 
 enum FieldType {
   'STRING' = 'string',
@@ -38,6 +38,7 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
     if (!type || !Object.values(FieldType).includes(type)) {
       throw new Error(`Fields must have a type of 'string', 'number', 'date' or 'boolean' (got ${type} for ${key})`)
     }
+
     const { isValid: isFieldValid, errors, isDirty } = runValidators(initialValue, type, validators, false, formFields)
     return {
       ...form,
@@ -58,7 +59,9 @@ const createForm = (formFields: Array<FormField<any>>): Form => {
 }
 
 export const useValidateForm = (formFields: Array<FormField<any>>) => {
-  const form = createForm(formFields)
+  const form = useMemo(() => {
+    return createForm(formFields)
+  }, [JSON.stringify(formFields)])
   return useReducer(reducer, {
     ...form,
     isValid: Object.values(form.fields).every(field => field.isValid),
@@ -93,7 +96,10 @@ const reducer = (
   {
     type,
     payload: { name: fieldName, value, newForm }
-  }: { type: string; payload: { name: string; value: any; newForm: Array<FormField<any>> } }
+  }: {
+    type: string
+    payload: { name: string; value: any; newForm: Array<FormField<any>> }
+  }
 ) => {
   switch (type) {
     case 'SET_VALUE':
@@ -153,8 +159,8 @@ const updateForm = (form: Form, fieldName: string, value: any, isBlur: Boolean) 
 const emailAddressRegex = /[^@]+@[^.]+\..+/
 
 export const isRequired = {
-  func: (value: any, fieldType: FieldType) => {
-    if (fieldType === FieldType.DATE) {
+  func: (value: any, fieldType: string) => {
+    if (fieldType === 'date') {
       return value && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value)
     }
 

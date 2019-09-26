@@ -28,7 +28,11 @@ const [
 
 ```
 
-Each item in the `validators` arrays must be an objects with a `func` property which returns `true` or `false` and an `error` property which is a string that will explain to a user why their input is invalid.
+Each item in the `validators` arrays must be an objects with a) a `func` property which takes the new value, the field's type, and an object containing all fields as arguments, and returns `true` or `false` and b) an `error` property which is a string that will explain to a user why their input is invalid.
+
+```js
+(value, type, allFields) => value > allFields.otherField.value
+```
 
 Each of the field objects returned by `useValidateForm` (i.e. `name`, `age`) have the following properties:
 
@@ -40,7 +44,7 @@ const {
   isDirty, // boolean
   errors, // array of strings
   name, // string
-  validators // array of functions
+  validators // array of validtor objects
 } = age
 ```
 
